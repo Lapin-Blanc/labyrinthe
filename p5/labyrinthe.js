@@ -1,197 +1,211 @@
+const UP = 0;
+const RIGHT = 4;
+const DOWN = 8;
+const LEFT = 12;
+
 var framerate = 60;
 var posX, posY;
 var nPosX, nPosY;
-var direction = nDirection = 'up';
-var dirAngle = 0; // Up
+var direction = nDirection = UP;
+var dirAngle = UP;
 var img, peg;
+var playerOne;
 
 function preload() {
-	img = loadImage('img/pegman.png');
-}
+	img = loadImage('img/astro.png');
+};
 
 function setup() {
-	var myCanvas = createCanvas(500, 500);
-	background(255, 250, 191);
-	myCanvas.parent('myCanvas');
-	frameRate(framerate);
-	peg = img.get(dirAngle*49,0,50,50);
+    var myCanvas = createCanvas(500, 500);
+    background(255, 250, 191);
+    myCanvas.parent('myCanvas');
+    frameRate(framerate);
+    playerOne = new Player(img);
 };
 
+function Player(img) {
+    var sprite = img;
+    var posX, nPosX, posY, nPosY;
+    var direction, nDirection, dirAngle;
+    var pix;
+    var spawned = function() {
+        return posX != undefined  &&  posY != undefined;
+    };
+    
+    this.spawn = function(callback, x, y, dir) {
+        posX = nPosX = x!=undefined ? x:0;
+        posY = nPosY = y!=undefined ? y:0;
+        direction = nDirection = dirAngle = dir!=undefined ? dir:DOWN;
+        pix = sprite.get(direction*49, 0, 50, 50);
+        callback();
+    };
+    
+    this.move = function(callback) {
+      framerate = 60;
+      switch (direction) {
+        case DOWN :
+          nPosY += 50;
+          break;
+        case RIGHT :
+          nPosX += 50;
+          break;
+        case UP :
+          nPosY -= 50;
+          break;
+        case LEFT :
+          nPosX -= 50;
+          break;
+      };
+      var timer = setInterval(myTimer, 5);
+        function myTimer() {
+            if (posX === nPosX && posY === nPosY) {
+                clearTimeout(timer);
+                callback();
+            };
+        };
+    };
+    
+    this.turn = function(dir, callback) {
+      framerate = 5;
+      switch (dir) {
+        case 'turnLeft' :
+          switch (direction) {
+            case UP :
+              nDirection = LEFT;
+              break;
+            case LEFT :
+              nDirection = DOWN;
+              break;
+            case DOWN :
+              nDirection = RIGHT;
+              break;
+            case RIGHT :
+              nDirection = UP;
+              break;
+          };
+          break;
+        case 'turnRight' :
+          switch (direction) {
+            case UP :
+              nDirection = RIGHT;
+              break;
+            case RIGHT :
+              nDirection = DOWN;
+              break;
+            case DOWN :
+              nDirection = LEFT;
+              break;
+            case LEFT :
+              nDirection = UP;
+              break;
+          };
+          break;
+      };
+      var timer = setInterval(myTimer, 5);
+      function myTimer() {
+        if (direction === nDirection) {
+          clearTimeout(timer);
+          callback();      
+        };
+      };
+    };
 
+    this.draw = function() {
+        if (spawned()) {
+            // Turning
+            if (direction != nDirection) {
+                switch (direction) {
+                  case UP : // We're at 0
+                    switch (nDirection) {
+                      case RIGHT :
+                        ++dirAngle;
+                        if (dirAngle === RIGHT) direction = nDirection;
+                        break;
+                      case LEFT :
+                        if (dirAngle === 0) dirAngle = 16; // First move to the left
+                        --dirAngle;
+                        if (dirAngle === LEFT) direction = nDirection;
+                        break;
+                    };
+                    break;
+                  
+                  case RIGHT : // We're at 4
+                    switch (nDirection) {
+                      case DOWN :
+                        ++dirAngle;
+                        if (dirAngle === DOWN) direction = nDirection;
+                        break;
+                      case UP :
+                        --dirAngle;
+                        if (dirAngle === UP) direction = nDirection;
+                        break;
+                    };
+                    break;
+
+                  case DOWN : // We're at 8
+                    switch (nDirection) {
+                      case LEFT :
+                        ++dirAngle;
+                        if (dirAngle === LEFT) direction = nDirection;
+                        break;
+                      case RIGHT :
+                        --dirAngle;
+                        if (dirAngle === RIGHT) direction = nDirection;
+                        break;
+                    };
+                    break;
+
+                  case LEFT : // We're at 12
+                    switch (nDirection) {
+                      case UP :
+                        ++dirAngle;
+                        if (dirAngle === 16) { // Last move to the right
+                          dirAngle = 0;
+                          direction = nDirection; // We're at UP
+                        };
+                        break;
+                      case DOWN :
+                        --dirAngle;
+                        if (dirAngle === DOWN) direction = nDirection;
+                        break;
+                    };
+                    break;
+
+                };
+                pix = sprite.get(dirAngle*49, 0, 50, 50); // turning sprite
+            };
+            
+            // Moving
+            if (posX < nPosX) posX++;
+            if (posY < nPosY) posY++;
+            if (posX > nPosX) posX--;
+            if (posY > nPosY) posY--;
+            
+            // Actually drawing the cropped image
+            image(pix, posX, posY, 50, 50)
+        };
+    };
+    
+    this.facingWall = function(callback) {
+      switch (direction) {
+        case DOWN :
+          callback(posY >= 450);
+          break;
+        case RIGHT :
+          callback(posX >= 450);
+          break;
+        case UP :
+          callback(posY <= 0);
+          break;
+        case LEFT :
+          callback(posX <= 0);
+          break;
+      };  
+    };
+};
+
+// Drawing main canvas
 function draw() {
 	background(255, 252, 191);
-  
-  // Turning
-	if (direction != nDirection) {
-    switch (direction) {
-      case 'up' : // We're at 0
-        switch (nDirection) {
-          case 'right' :
-            ++dirAngle;
-            if (dirAngle === 4) direction = nDirection;
-            break;
-          case 'left' :
-            if (dirAngle === 0) dirAngle = 16;
-            --dirAngle;
-            if (dirAngle === 12) {
-              direction = nDirection;
-            }
-            break;
-        };
-        break;
-      
-      case 'right' : // We're at 4
-        switch (nDirection) {
-          case 'down' :
-            ++dirAngle;
-            if (dirAngle === 8) direction = nDirection;
-            break;
-          case 'up' :
-            --dirAngle;
-            if (dirAngle === 0) {
-              direction = nDirection;
-            };
-            break;
-        };
-        break;
-
-      case 'down' : // We're at 8
-        switch (nDirection) {
-          case 'left' :
-            ++dirAngle;
-            if (dirAngle === 12) direction = nDirection;
-            break;
-          case 'right' :
-            --dirAngle;
-            if (dirAngle === 4) direction = nDirection;
-            break;
-        };
-        break;
-
-      case 'left' : // We're at 12
-        switch (nDirection) {
-          case 'up' :
-            ++dirAngle;
-            if (dirAngle === 16) {
-              dirAngle = 0;
-              direction = nDirection;
-            };
-            break;
-          case 'down' :
-            --dirAngle;
-            if (dirAngle === 8) direction = nDirection;
-            break;
-        };
-        break;
-
-    };
-    peg = img.get(dirAngle*49, 0, 50, 50);
-	};
-  
-  // Moving or turning 
-	if (posX != undefined && posY != undefined) {
-		if (posX < nPosX) posX++;
-		if (posY < nPosY) posY++;
-		if (posX > nPosX) posX--;
-		if (posY > nPosY) posY--;
-    image(peg, posX, posY, 50, 50);
-	};		
+    playerOne.draw();
 };
-
-function mazeSpawn(callback) {
-	posX = nPosX = 200;
-	posY = nPosY = 200;
-	direction = nDirection = "up";
-	dirAngle = 0;
-	peg = img.get(dirAngle*49, 0, 50, 50);
-	// image(peg, posX, posY);
-  callback();
-}
-
-function mazeMove(callback) {
-  framerate = 60;
-  switch (direction) {
-    case 'down' :
-      nPosY += 50;
-      break;
-    case 'right' :
-      nPosX += 50;
-      break;
-    case 'up' :
-      nPosY -= 50;
-      break;
-    case 'left' :
-      nPosX -= 50;
-      break;
-  };
-  var timer = setInterval(myTimer, 5);
-	function myTimer() {
-		if (posX === nPosX && posY === nPosY) {
-			clearTimeout(timer);
-      callback();
-		};
-	};
-};
-
-function mazeTurn(dir, callback) {
-  framerate = 5;
-  switch (dir) {
-    case 'turnLeft' :
-      switch (direction) {
-        case 'down' :
-          nDirection = "right";
-          break;
-        case 'right' :
-          nDirection = "up";
-          break;
-        case 'up' :
-          nDirection = "left";
-          break;
-        case 'left' :
-          nDirection = "down";
-          break;
-      };
-      break;
-    case 'turnRight' :
-      switch (direction) {
-        case 'up' :
-          nDirection = "right";
-          break;
-        case 'down' :
-          nDirection = "left";
-          break;
-        case 'right' :
-          nDirection = "down";
-          break;
-        case 'left' :
-          nDirection = "up";
-          break;
-      };
-      break;
-  };
-  var timer = setInterval(myTimer, 5);
-  function myTimer() {
-    if (direction === nDirection) {
-			clearTimeout(timer);
-      callback();      
-    }
-  };
-};
-
-function mazeFacingWall(callback) {
-  switch (direction) {
-    case 'down' :
-      callback(posY >= 450);
-      break;
-    case 'right' :
-      // alert(posX);
-      callback(posX >= 450);
-      break;
-    case 'up' :
-      callback(posY <= 0);
-      break;
-    case 'left' :
-      callback(posX <= 0);
-      break;
-  };  
-}

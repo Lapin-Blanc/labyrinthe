@@ -3,6 +3,7 @@
 function parseButton() {
   var code = document.getElementById('javascript-code').value;
   myInterpreter = new Interpreter(code, initAlert);
+  myInterpreter.player = playerOne; // from labyrinthe.js
   disable('');
 }
 
@@ -31,7 +32,6 @@ function runButton() {
   if (myInterpreter.run()) {
     // Ran until an async call.  Give this call a chance to run.
     // Then start running again later.
-    // 1000ms is waaay too long, but is used here to demo the pause.
     setTimeout(runButton, 10);
   }
 }
