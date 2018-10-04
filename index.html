@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Labyrinthe</title>
+    <link href="interpreter/style.css" rel="stylesheet" type="text/css">
+    <script src="interpreter/acorn_interpreter.js"></script>
+    <script src="interpreter/interpreter.js"></script>
+    <!-- inclusion order is important -->
+    <script src="interpreter/custom_api.js"></script>
+    <script src="interpreter/init_interpreter.js"></script>
+    
+    <script src="p5/p5.js"></script>
+    <script src="p5/labyrinthe.js"></script>
+    
+    <!-- Blockly -->
+		<script src="blockly/blockly_compressed.js"></script>
+		<script src="blockly/blocks_compressed.js"></script>
+		<script src="blockly/msg/js/fr.js"></script>
+		<!-- Generated language -->
+		<script src="blockly/javascript_compressed.js"></script>
+		<!-- Custom blockly elements -->
+		<script src="custom/blocks.js"></script>
+		<script src="custom/my_toolbox.js"></script>
+</head>
+<body>
+  <h1>Labyrinthe</h1>
+  
+  <table border="1">
+    <tr>
+      <td><div id="blocklyDiv" style="height: 500px; width: 500px;"></td>
+      <td style="padding:10px;"><div id="myCanvas"></td>
+    </tr>
+    <tr>
+      <td colspan="2"><textarea id="javascript-code"></textarea></td>
+    </tr>
+  </table>
+
+  <p><br>    
+    <button onclick="parseButton()">Parse</button>
+    <button onclick="stepButton()" id="stepButton" disabled="disabled">Step</button>
+    <button onclick="runButton()" id="runButton" disabled="disabled">Run</button>    
+  </p>
+
+		<!-- Blockly -->
+		<script>
+			<!-- Injection -->
+			var workspace = Blockly.inject('blocklyDiv',
+					{
+					<!-- toolbox: document.getElementById('toolbox'), -->
+					toolbox: my_toolbox, // from my_toolbox.js
+					trashcan: true
+					}
+				);
+			<!-- Automatic update for generated code -->
+			function myUpdateFunction(event) {
+				var code = Blockly.JavaScript.workspaceToCode(workspace);
+			document.getElementById('javascript-code').value = code;
+			}
+			workspace.addChangeListener(myUpdateFunction);
+		</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+body {
+  background-color: #fff;
+  font-family: sans-serif;
+}
+a:hover {
+  color: red;
+}
+h1, h2, h3 {
+  font-weight: normal;
+}
+#javascript-code {
+  font-family: monospace;
+  font-size: larger;
+  height: 15em;
+  width: 1000px;
+  height: 230px;
+  max-width: 111ex;
+  border: none;
+}
