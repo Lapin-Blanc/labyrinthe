@@ -51,7 +51,7 @@ function run1() {
         console.log("2 finished")
         activePlayer++;
         activePlayer %= 2;
-        if ( !interpreter1.player.over ) setTimeout(run0, 1000);
+        if ( !interpreter0.player.over ) setTimeout(run1, 1000);
       }
   }
 }
