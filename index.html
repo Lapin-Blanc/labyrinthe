@@ -33,15 +33,30 @@
       <td style="padding:10px;"><div id="myCanvas"></td>
     </tr>
     <tr>
-      <td colspan="2"><textarea id="javascript-code"></textarea></td>
+        <td>
+          <textarea id="javascript-code0" class="js-code">
+spawn();
+move();
+move();
+turn('turnLeft');
+move();
+turn('turnRight');
+        </textarea>
+        </td>
+      <td>
+          <textarea id="javascript-code1" class="js-code">
+spawn();
+turn('turnLeft');
+move();
+move();
+turn('turnRight');
+move();          
+          </textarea>
+      </td>
     </tr>
   </table>
-
-  <p><br>    
-    <button onclick="parseButton()">Parse</button>
-    <button onclick="stepButton()" id="stepButton" disabled="disabled">Step</button>
-    <button onclick="runButton()" id="runButton" disabled="disabled">Run</button>    
-  </p>
+<button onclick="parseBtn()" id="parseBtn">Parse</button>
+<button onclick="runBtn()" id="runBtn">Run</button>
 
 		<!-- Blockly -->
 		<script>

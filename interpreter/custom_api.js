@@ -20,7 +20,6 @@
   ///////////////////////////////////////////////
   // Spawn
   var wrapper = function(callback) {
-    //~ mazeSpawn(callback);
     interpreter.player.spawn(callback);
   }
   interpreter.setProperty(scope, 'spawn',

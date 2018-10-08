@@ -1,59 +1,52 @@
-﻿var myInterpreter;
+﻿var interpreter0;
+var interpreter1;
 
-function parseButton() {
-  var code = document.getElementById('javascript-code').value;
-  myInterpreter = new Interpreter(code, initAlert);
-  myInterpreter.player = playerOne; // from labyrinthe.js
+function parseBtn() {
+  var code = document.getElementById('javascript-code0').value;
+  interpreter0 = new Interpreter(code, initAlert);
+  interpreter0.player = playerOne; // from labyrinthe.js
+  var code = document.getElementById('javascript-code1').value;
+  interpreter1 = new Interpreter(code, initAlert);
+  interpreter1.player = playerTwo; // from labyrinthe.js
   disable('');
 }
 
-function stepButton() {
-  if (myInterpreter.stateStack.length) {
-    var node =
-        myInterpreter.stateStack[myInterpreter.stateStack.length - 1].node;
-    var start = node.start;
-    var end = node.end;
+function runBtn() {
+    disable('disabled');
+    console.log('Player one starting');
+    run0();
+    console.log('Player two starting');
+    run1();
+}
+
+function run0() {
+  if ((activePlayer != 0) && (!interpreter0.player.over)) {
+      setTimeout(run0, 10);
   } else {
-    var start = 0;
-    var end = 0;
-  }
-  createSelection(start, end);
-  try {
-    var ok = myInterpreter.step();
-  } finally {
-    if (!ok) {
-      disable('disabled');
-    }
+      if (interpreter0.run()) {
+        // Ran until an async call.  Give this call a chance to run.
+        // Then start running again later.
+        setTimeout(run0, 10);
+      } else {
+          interpreter0.player.over = true;
+      }
   }
 }
 
-function runButton() {
-  disable('disabled');
-  if (myInterpreter.run()) {
-    // Ran until an async call.  Give this call a chance to run.
-    // Then start running again later.
-    setTimeout(runButton, 10);
+function run1() {
+  if ((activePlayer != 1) && (!interpreter0.player.over)) {
+      setTimeout(run1, 10);
+  } else {
+      if (interpreter1.run()) {
+        // Ran until an async call.  Give this call a chance to run.
+        // Then start running again later.
+        setTimeout(run1, 10);
+      } else {
+          interpreter1.player.over = true;
+      }
   }
 }
 
 function disable(disabled) {
-  document.getElementById('stepButton').disabled = disabled;
-  document.getElementById('runButton').disabled = disabled;
-}
-
-function createSelection(start, end) {
-  var field = document.getElementById('javascript-code');
-  if (field.createTextRange) {
-    var selRange = field.createTextRange();
-    selRange.collapse(true);
-    selRange.moveStart('character', start);
-    selRange.moveEnd('character', end);
-    selRange.select();
-  } else if (field.setSelectionRange) {
-    field.setSelectionRange(start, end);
-  } else if (field.selectionStart) {
-    field.selectionStart = start;
-    field.selectionEnd = end;
-  }
-  field.focus();
+  document.getElementById('runBtn').disabled = disabled;
 }

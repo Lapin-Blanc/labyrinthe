@@ -2,28 +2,35 @@ const UP = 0;
 const RIGHT = 4;
 const DOWN = 8;
 const LEFT = 12;
+const MOVING_FR = 80; // Moving framerate
+const TURNING_FR = ~~(MOVING_FR/8); // Integer division
 
-var framerate = 60;
 var posX, posY;
 var nPosX, nPosY;
 var direction = nDirection = UP;
 var dirAngle = UP;
-var img, peg;
+var img, img1;
 var playerOne;
+var playerTwo;
+var activePlayer = 0;
 
 function preload() {
-	img = loadImage('img/astro.png');
+	img = loadImage('img/pegman.png');
+    img1 = loadImage('img/astro.png');
 };
 
 function setup() {
     var myCanvas = createCanvas(500, 500);
     background(255, 250, 191);
     myCanvas.parent('myCanvas');
-    frameRate(framerate);
-    playerOne = new Player(img);
+    frameRate(MOVING_FR);
+    playerOne = new Player('pegman', img);
+    playerTwo = new Player('astro', img1);
 };
 
-function Player(img) {
+function Player(name, img) {
+    this.over = false;
+    var name = name;
     var sprite = img;
     var posX, nPosX, posY, nPosY;
     var direction, nDirection, dirAngle;
@@ -31,17 +38,24 @@ function Player(img) {
     var spawned = function() {
         return posX != undefined  &&  posY != undefined;
     };
-    
     this.spawn = function(callback, x, y, dir) {
-        posX = nPosX = x!=undefined ? x:0;
-        posY = nPosY = y!=undefined ? y:0;
-        direction = nDirection = dirAngle = dir!=undefined ? dir:DOWN;
-        pix = sprite.get(direction*49, 0, 50, 50);
-        callback();
+        console.log('spawn called for ' + name);
+        var retour = function(callback) {
+            posX = nPosX = x!=undefined ? x:0;
+            posY = nPosY = y!=undefined ? y:0;
+            direction = nDirection = dirAngle = dir!=undefined ? dir:DOWN;
+            pix = sprite.get(direction*49, 0, 50, 50);
+            activePlayer = ++activePlayer;
+            activePlayer = activePlayer % 2;
+            console.log(name + ' spawned');
+            callback('spawned');
+        };
+        setTimeout(retour , 500, callback);        
     };
     
     this.move = function(callback) {
-      framerate = 60;
+      frameRate(MOVING_FR);
+      console.log(name + ' moving');
       switch (direction) {
         case DOWN :
           nPosY += 50;
@@ -56,17 +70,21 @@ function Player(img) {
           nPosX -= 50;
           break;
       };
-      var timer = setInterval(myTimer, 5);
-        function myTimer() {
-            if (posX === nPosX && posY === nPosY) {
-                clearTimeout(timer);
-                callback();
-            };
+      function myTimer() {
+        if (posX === nPosX && posY === nPosY) {
+          clearTimeout(timer);
+          activePlayer = ++activePlayer;
+          activePlayer = activePlayer % 2;
+          console.log(name + ' moved');
+          callback('moved');
         };
+      };
+      var timer = setInterval(myTimer, 5);
     };
     
     this.turn = function(dir, callback) {
-      framerate = 5;
+      frameRate(TURNING_FR);
+      console.log(name + ' turning');
       switch (dir) {
         case 'turnLeft' :
           switch (direction) {
@@ -101,13 +119,16 @@ function Player(img) {
           };
           break;
       };
-      var timer = setInterval(myTimer, 5);
       function myTimer() {
         if (direction === nDirection) {
           clearTimeout(timer);
+          activePlayer = ++activePlayer;
+          activePlayer = activePlayer % 2;
+          console.log(name + ' turned');
           callback();      
         };
       };
+      var timer = setInterval(myTimer, 5);
     };
 
     this.draw = function() {
@@ -208,4 +229,5 @@ function Player(img) {
 function draw() {
 	background(255, 252, 191);
     playerOne.draw();
+    playerTwo.draw();
 };
