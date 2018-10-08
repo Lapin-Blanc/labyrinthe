@@ -2,13 +2,10 @@ const UP = 0;
 const RIGHT = 4;
 const DOWN = 8;
 const LEFT = 12;
-const MOVING_FR = 80; // Moving framerate
+const MOVING_FR = 150; // Moving framerate
 const TURNING_FR = ~~(MOVING_FR/8); // Integer division
+const STEP_DELAY = 10 // Time between movements
 
-var posX, posY;
-var nPosX, nPosY;
-var direction = nDirection = UP;
-var dirAngle = UP;
 var img, img1;
 var playerOne;
 var playerTwo;
@@ -26,6 +23,8 @@ function setup() {
     frameRate(MOVING_FR);
     playerOne = new Player('pegman', img);
     playerTwo = new Player('astro', img1);
+    playerOne.spawn(function dummy() {console.log('spawned from setup one');});
+    playerTwo.spawn(function dummy() {console.log('spawned from setup two');}, 450, 450, UP);
 };
 
 function Player(name, img) {
@@ -40,17 +39,14 @@ function Player(name, img) {
     };
     this.spawn = function(callback, x, y, dir) {
         console.log('spawn called for ' + name);
-        var retour = function(callback) {
-            posX = nPosX = x!=undefined ? x:0;
-            posY = nPosY = y!=undefined ? y:0;
-            direction = nDirection = dirAngle = dir!=undefined ? dir:DOWN;
-            pix = sprite.get(direction*49, 0, 50, 50);
-            activePlayer = ++activePlayer;
-            activePlayer = activePlayer % 2;
-            console.log(name + ' spawned');
-            callback('spawned');
-        };
-        setTimeout(retour , 500, callback);        
+        posX = nPosX = x!=undefined ? x:0;
+        posY = nPosY = y!=undefined ? y:0;
+        direction = nDirection = dirAngle = dir!=undefined ? dir:DOWN;
+        pix = sprite.get(direction*49, 0, 50, 50);
+        console.log(name + ' spawned');
+        activePlayer++;
+        activePlayer = activePlayer % 2;
+        callback('spawned');
     };
     
     this.move = function(callback) {
@@ -58,24 +54,24 @@ function Player(name, img) {
       console.log(name + ' moving');
       switch (direction) {
         case DOWN :
-          nPosY += 50;
+          if (posY < 450) nPosY += 50;
           break;
         case RIGHT :
-          nPosX += 50;
+          if (posX < 450) nPosX += 50;
           break;
         case UP :
-          nPosY -= 50;
+          if (posY > 0) nPosY -= 50;
           break;
         case LEFT :
-          nPosX -= 50;
+          if (posX > 0) nPosX -= 50;
           break;
       };
       function myTimer() {
         if (posX === nPosX && posY === nPosY) {
-          clearTimeout(timer);
-          activePlayer = ++activePlayer;
-          activePlayer = activePlayer % 2;
           console.log(name + ' moved');
+          activePlayer++;
+          activePlayer = activePlayer % 2;
+          clearTimeout(timer);
           callback('moved');
         };
       };
@@ -121,10 +117,10 @@ function Player(name, img) {
       };
       function myTimer() {
         if (direction === nDirection) {
-          clearTimeout(timer);
-          activePlayer = ++activePlayer;
-          activePlayer = activePlayer % 2;
           console.log(name + ' turned');
+          activePlayer++;
+          activePlayer = activePlayer % 2;
+          clearTimeout(timer);
           callback();      
         };
       };

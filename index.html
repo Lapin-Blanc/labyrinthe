@@ -35,28 +35,31 @@
     <tr>
         <td>
           <textarea id="javascript-code0" class="js-code">
-spawn();
 move();
 move();
 turn('turnLeft');
 move();
 turn('turnRight');
-        </textarea>
+</textarea>
         </td>
       <td>
           <textarea id="javascript-code1" class="js-code">
-spawn();
 turn('turnLeft');
 move();
 move();
 turn('turnRight');
-move();          
-          </textarea>
+move();
+move();      
+turn('turnRight');
+move();
+turn('turnLeft');
+</textarea>
       </td>
     </tr>
   </table>
 <button onclick="parseBtn()" id="parseBtn">Parse</button>
 <button onclick="runBtn()" id="runBtn">Run</button>
+<button onclick="resetBtn()" id="resetBtn">Reset</button>
 
 		<!-- Blockly -->
 		<script>
@@ -71,7 +74,7 @@ move();
 			<!-- Automatic update for generated code -->
 			function myUpdateFunction(event) {
 				var code = Blockly.JavaScript.workspaceToCode(workspace);
-			document.getElementById('javascript-code').value = code;
+			document.getElementById('javascript-code0').value = code;
 			}
 			workspace.addChangeListener(myUpdateFunction);
 		</script>

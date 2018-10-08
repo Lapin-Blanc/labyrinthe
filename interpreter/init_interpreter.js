@@ -1,6 +1,10 @@
 ﻿var interpreter0;
 var interpreter1;
 
+function resetBtn() {
+  setup(); // Reset labyrinthe  
+}
+
 function parseBtn() {
   var code = document.getElementById('javascript-code0').value;
   interpreter0 = new Interpreter(code, initAlert);
@@ -13,9 +17,8 @@ function parseBtn() {
 
 function runBtn() {
     disable('disabled');
-    console.log('Player one starting');
+    activePlayer = 0;
     run0();
-    console.log('Player two starting');
     run1();
 }
 
@@ -26,23 +29,29 @@ function run0() {
       if (interpreter0.run()) {
         // Ran until an async call.  Give this call a chance to run.
         // Then start running again later.
-        setTimeout(run0, 10);
+        setTimeout(run0, 5);
       } else {
-          interpreter0.player.over = true;
+        console.log("1 finished");
+        activePlayer++;
+        activePlayer %= 2;
+        if ( !interpreter1.player.over ) setTimeout(run0, 1000);
       }
   }
 }
 
 function run1() {
-  if ((activePlayer != 1) && (!interpreter0.player.over)) {
+  if ((activePlayer != 1) && (!interpreter1.player.over)) {
       setTimeout(run1, 10);
   } else {
       if (interpreter1.run()) {
         // Ran until an async call.  Give this call a chance to run.
         // Then start running again later.
-        setTimeout(run1, 10);
+        setTimeout(run1, 5);
       } else {
-          interpreter1.player.over = true;
+        console.log("2 finished")
+        activePlayer++;
+        activePlayer %= 2;
+        if ( !interpreter1.player.over ) setTimeout(run0, 1000);
       }
   }
 }
