@@ -4,12 +4,13 @@ const DOWN = 8;
 const LEFT = 12;
 const MOVING_FR = 150; // Moving framerate
 const TURNING_FR = ~~(MOVING_FR/8); // Integer division
-const STEP_DELAY = 10 // Time between movements
+const STEP_DELAY = 100 // Time between movements
 
 var img, img1;
 var playerOne;
 var playerTwo;
 var activePlayer = 0;
+var lastPlayer = 1;
 
 function preload() {
 	img = loadImage('img/pegman.png');
@@ -68,9 +69,9 @@ function Player(name, img) {
       };
       function myTimer() {
         if (posX === nPosX && posY === nPosY) {
-          console.log(name + ' moved');
           activePlayer++;
           activePlayer = activePlayer % 2;
+          console.log(name + ' moved, now active player is ' + activePlayer);
           clearTimeout(timer);
           callback('moved');
         };
