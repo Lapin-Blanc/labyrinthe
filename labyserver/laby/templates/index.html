@@ -33,7 +33,10 @@
           // Ici, this.readyState égale XMLHttpRequest.DONE .
           if (this.status === 200) {
               console.log("Réponse reçue: %s", this.responseText);
-              document.getElementById("javascript-code{% if player == 0 %}1{% else %}0{% endif %}").value = this.responseText;
+              obj = JSON.parse(this.responseText);
+              document.getElementById("javascript-code{% if player == 0 %}1{% else %}0{% endif %}").value = obj.code;
+              document.getElementById("round-number").textContent = obj.next_round;
+              document.getElementById("roundNumber").value = obj.next_round;
               document.getElementById("submitBtn").disabled = '';
               parseBtn();
               r0();
@@ -54,6 +57,7 @@
         var formData = new FormData();
         formData.append("player", document.getElementById("playerId").value);
         formData.append("code", document.getElementById("javascript-code{% if player == 0 %}0{% else %}1{% endif %}").value);
+        formData.append("round_number", document.getElementById("roundNumber").value);
         formData.append("csrfmiddlewaretoken", document.getElementsByName("csrfmiddlewaretoken")[0].value);
         xhr.open('POST','xml/');
         xhr.send(formData);  
@@ -64,7 +68,7 @@
 <body>
   
   <h1>Labyrinthe</h1>
-  <h2>Joueur {% if player == 0 %}Pegman{% else %}Astro{% endif %}</h2>
+  <h2>Joueur {% if player == 0 %}Pegman{% else %}Astro{% endif %} - Tour <span id="round-number">{{ round_number }}</span></h2>
   
   <table border="1">
     <tr>
@@ -73,10 +77,10 @@
     </tr>
     <tr>
         <td>
-          <textarea id="javascript-code{% if player == 0 %}0{% else %}1{% endif %}" class="js-code"></textarea>
+          <textarea id="javascript-code{% if player == 0 %}0{% else %}1{% endif %}" class="js-code">{{ code }}</textarea>
         </td>
       <td>
-          <textarea disabled="disabled" id="javascript-code{% if player == 0 %}1{% else %}0{% endif %}" class="js-code"></textarea>
+          <textarea disabled="disabled" id="javascript-code{% if player == 0 %}1{% else %}0{% endif %}" class="js-code">{{ code }}</textarea>
       </td>
     </tr>
   </table>
@@ -104,5 +108,6 @@
 		</script>
     <div id="csrf">{% csrf_token %}</div>
     <input type="hidden" id="playerId" value={{ player }}>
+    <input type="hidden" id="roundNumber" value={{ round_number }}>
 </body>
 </html>
