@@ -9,6 +9,7 @@ const STEP_DELAY = 100 // Time between movements
 var DEBUG = false;
 // TODO : detect infinite loops --> counting max moves
 // TODO : detect logic bombs --> interpreter stack size
+// TODO : try to avoid static/ for Django
 
 var img, img1;
 var playerOne;
@@ -17,8 +18,8 @@ var activePlayer = 0;
 var lastPlayer = 1;
 
 function preload() {
-  img = loadImage('img/pegman.png');
-  img1 = loadImage('img/astro.png');
+  img = loadImage('static/img/pegman.png');
+  img1 = loadImage('static/img/astro.png');
 };
 
 function setup() {

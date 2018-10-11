@@ -1,31 +1,70 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <title>Labyrinthe</title>
-    <link href="interpreter/style.css" rel="stylesheet" type="text/css">
+    <link href='{% static "interpreter/style.css" %}' rel="stylesheet" type="text/css">
 
-    <script src="p5/p5.js"></script>
-    <script src="p5/labyrinthe.js"></script>
+    <script src='{% static "p5/p5.js" %}'></script>
+    <script src='{% static "p5/labyrinthe.js" %}'></script>
 
-    <script src="interpreter/acorn_interpreter.js"></script>
-    <script src="interpreter/interpreter.js"></script>
+    <script src='{% static "interpreter/acorn_interpreter.js" %}'></script>
+    <script src='{% static "interpreter/interpreter.js" %}'></script>
     <!-- inclusion order is important -->
-    <script src="interpreter/custom_api.js"></script>
-    <script src="interpreter/init_interpreter.js"></script>
+    <script src='{% static "interpreter/custom_api.js" %}'></script>
+    <script src='{% static "interpreter/init_interpreter.js" %}'></script>
        
     <!-- Blockly -->
-    <script src="blockly/blockly_compressed.js"></script>
-    <script src="blockly/blocks_compressed.js"></script>
-    <script src="blockly/msg/js/fr.js"></script>
+    <script src='{% static "blockly/blockly_compressed.js" %}'></script>
+    <script src='{% static "blockly/blocks_compressed.js" %}'></script>
+    <script src='{% static "blockly/msg/js/fr.js" %}'></script>
     <!-- Generated language -->
-    <script src="blockly/javascript_compressed.js"></script>
+    <script src='{% static "blockly/javascript_compressed.js" %}'></script>
     <!-- Custom blockly elements -->
-    <script src="custom/blocks.js"></script>
-    <script src="custom/my_toolbox.js"></script>
+    <script src='{% static "custom/blocks.js" %}'></script>
+    <script src='{% static "custom/my_toolbox.js" %}'></script>
+<!--
+    For django
+-->
+    <script src='{% static "request.js" %}'></script>
+    <script>
+      function onLoad(event) {
+          // Ici, this.readyState égale XMLHttpRequest.DONE .
+          if (this.status === 200) {
+              console.log("Réponse reçue: %s", this.responseText);
+              document.getElementById("javascript-code{% if player == 0 %}1{% else %}0{% endif %}").value = this.responseText;
+              document.getElementById("submitBtn").disabled = '';
+              parseBtn();
+              r0();
+          } else {
+              console.log("Status de la réponse: %d (%s)", this.status, this.statusText);
+              document.getElementById("submitBtn").disabled = 'disabled';
+              setTimeout(submitBtn, 1000);
+          }
+      }
+      function submitBtn() {
+        parseBtn();
+        var xhr = new XMLHttpRequest()
+        xhr.onprogress = onProgress;
+        xhr.onerror = onError;
+        xhr.onload = onLoad;
+        xhr.onloadend = onLoadEnd;
+        
+        var formData = new FormData();
+        formData.append("player", document.getElementById("playerId").value);
+        formData.append("code", document.getElementById("javascript-code{% if player == 0 %}0{% else %}1{% endif %}").value);
+        formData.append("csrfmiddlewaretoken", document.getElementsByName("csrfmiddlewaretoken")[0].value);
+        xhr.open('POST','xml/');
+        xhr.send(formData);  
+      }    
+    </script>
 </head>
+
 <body>
+  
   <h1>Labyrinthe</h1>
+  <h2>Joueur {% if player == 0 %}Pegman{% else %}Astro{% endif %}</h2>
   
   <table border="1">
     <tr>
@@ -34,40 +73,24 @@
     </tr>
     <tr>
         <td>
-          <textarea id="javascript-code0" class="js-code">
-while (!(facingWall())) {
-  move();
-  turn('turnLeft');
-  move();
-  turn('turnRight');
-}
-</textarea>
+          <textarea id="javascript-code{% if player == 0 %}0{% else %}1{% endif %}" class="js-code"></textarea>
         </td>
       <td>
-          <textarea id="javascript-code1" class="js-code">
-turn('turnLeft');
-move();
-move();
-turn('turnRight');
-move();
-move();      
-turn('turnRight');
-move();
-turn('turnLeft');
-</textarea>
+          <textarea disabled="disabled" id="javascript-code{% if player == 0 %}1{% else %}0{% endif %}" class="js-code"></textarea>
       </td>
     </tr>
   </table>
+
 <button onclick="parseBtn()" id="parseBtn">Parse</button>
 <button onclick="r0()" id="runBtn">Run</button>
 <button onclick="resetBtn()" id="resetBtn">Reset</button>
+<button onclick="submitBtn()" id="submitBtn">Submit</button>
 
 		<!-- Blockly -->
 		<script>
 			<!-- Injection -->
 			var workspace = Blockly.inject('blocklyDiv',
 					{
-					<!-- toolbox: document.getElementById('toolbox'), -->
 					toolbox: my_toolbox, // from my_toolbox.js
 					trashcan: true
 					}
@@ -75,9 +98,11 @@ turn('turnLeft');
 			<!-- Automatic update for generated code -->
 			function myUpdateFunction(event) {
 				var code = Blockly.JavaScript.workspaceToCode(workspace);
-			document.getElementById('javascript-code0').value = code;
+			document.getElementById("javascript-code{% if player == 0 %}0{% else %}1{% endif %}").value = code;
 			}
 			workspace.addChangeListener(myUpdateFunction);
 		</script>
+    <div id="csrf">{% csrf_token %}</div>
+    <input type="hidden" id="playerId" value={{ player }}>
 </body>
 </html>
