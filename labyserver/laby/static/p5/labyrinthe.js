@@ -18,8 +18,8 @@ var activePlayer = 0;
 var lastPlayer = 1;
 
 function preload() {
-  img = loadImage('static/img/pegman.png');
-  img1 = loadImage('static/img/astro.png');
+  img = loadImage('/static/img/pegman.png');
+  img1 = loadImage('/static/img/astro.png');
 };
 
 function setup() {
