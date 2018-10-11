@@ -30,11 +30,12 @@ function r0() {
       } else {
         count0++;
         activePlayer = (activePlayer+1)%2
-        console.log('c0 = ' + count0 + ' calling r1 with active player ' + activePlayer);
+        if (DEBUG) console.log('c0 = ' + count0 + 
+          ' calling r1 with active player ' + activePlayer);
         setTimeout(r1, STEP_DELAY)
       }
     } else {		
-      console.log('calling r1 with count0 = ' + count0);
+      if (DEBUG) console.log('calling r1 with count0 = ' + count0);
       setTimeout(r1, STEP_DELAY)
     }		
 }
@@ -50,11 +51,12 @@ function r1() {
       } else {
         count1++;
         activePlayer = (activePlayer+1)%2
-        console.log(' c1 = ' + count1 + ' calling r0 with active player ' + activePlayer);
+        if (DEBUG) console.log(' c1 = ' + count1 +
+          ' calling r0 with active player ' + activePlayer);
         setTimeout(r1, STEP_DELAY)
       }
     } else {		
-      console.log(' calling r0 with count1 = ' + count1);
+      if (DEBUG) console.log(' calling r0 with count1 = ' + count1);
       setTimeout(r0, STEP_DELAY)
     }		
 }
