@@ -20,8 +20,7 @@
   ///////////////////////////////////////////////
   // Spawn
   var wrapper = function(callback) {
-    // interpreter.player.spawn(callback);
-    setTimeout(interpreter.player.spawn, STEP_DELAY, callback);
+    interpreter.player.spawn(callback);
   }
   interpreter.setProperty(scope, 'spawn',
       interpreter.createAsyncFunction(wrapper));
@@ -30,8 +29,7 @@
   ///////////////////////////////////////////////
   // Move
   var wrapper = function(callback) {
-    // interpreter.player.move(callback);
-    setTimeout(interpreter.player.move, STEP_DELAY, callback);
+    interpreter.player.move(callback);
   }
   interpreter.setProperty(scope, 'move',
       interpreter.createAsyncFunction(wrapper));
@@ -40,8 +38,7 @@
   ///////////////////////////////////////////////
   // Turn
   var wrapper = function(direction, callback) {
-    // interpreter.player.turn(direction, callback);
-    setTimeout(interpreter.player.turn, STEP_DELAY, direction, callback);
+    interpreter.player.turn(direction, callback);
   }
   interpreter.setProperty(scope, 'turn',
       interpreter.createAsyncFunction(wrapper));

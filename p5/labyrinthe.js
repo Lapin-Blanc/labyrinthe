@@ -24,8 +24,8 @@ function setup() {
     frameRate(MOVING_FR);
     playerOne = new Player('pegman', img);
     playerTwo = new Player('astro', img1);
-    playerOne.spawn(function dummy() {console.log('spawned from setup one');});
-    playerTwo.spawn(function dummy() {console.log('spawned from setup two');}, 450, 450, UP);
+    playerOne.spawn(function dummy() {console.log('=== spawned from setup one');});
+    playerTwo.spawn(function dummy() {console.log('=== spawned from setup two');}, 450, 450, UP);
 };
 
 function Player(name, img) {
@@ -39,12 +39,12 @@ function Player(name, img) {
         return posX != undefined  &&  posY != undefined;
     };
     this.spawn = function(callback, x, y, dir) {
-        console.log('spawn called for ' + name);
+        //~ console.log('spawn called for ' + name);
         posX = nPosX = x!=undefined ? x:0;
         posY = nPosY = y!=undefined ? y:0;
         direction = nDirection = dirAngle = dir!=undefined ? dir:DOWN;
         pix = sprite.get(direction*49, 0, 50, 50);
-        console.log(name + ' spawned');
+        //~ console.log(name + ' spawned');
         activePlayer++;
         activePlayer = activePlayer % 2;
         callback('spawned');
@@ -52,7 +52,7 @@ function Player(name, img) {
     
     this.move = function(callback) {
       frameRate(MOVING_FR);
-      console.log(name + ' moving');
+      console.log('--' + name + ' moving');
       switch (direction) {
         case DOWN :
           if (posY < 450) nPosY += 50;
@@ -71,7 +71,7 @@ function Player(name, img) {
         if (posX === nPosX && posY === nPosY) {
           activePlayer++;
           activePlayer = activePlayer % 2;
-          console.log(name + ' moved, now active player is ' + activePlayer);
+          console.log('--' + name + ' moved, now active player is ' + activePlayer);
           clearTimeout(timer);
           callback('moved');
         };
@@ -81,7 +81,7 @@ function Player(name, img) {
     
     this.turn = function(dir, callback) {
       frameRate(TURNING_FR);
-      console.log(name + ' turning');
+      console.log('--' + name + ' turning');
       switch (dir) {
         case 'turnLeft' :
           switch (direction) {
@@ -118,7 +118,7 @@ function Player(name, img) {
       };
       function myTimer() {
         if (direction === nDirection) {
-          console.log(name + ' turned');
+          console.log('--' + name + ' turned');
           activePlayer++;
           activePlayer = activePlayer % 2;
           clearTimeout(timer);
