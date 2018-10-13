@@ -5,6 +5,8 @@ const LEFT = 12;
 const MOVING_FR = 150; // Moving framerate
 const TURNING_FR = ~~(MOVING_FR/8); // Integer division
 const STEP_DELAY = 100 // Time between movements
+const _ = 0 // empty square
+const C = 1 // gold coin
 
 var DEBUG = false;
 // TODO : detect infinite loops --> counting max moves
@@ -15,10 +17,25 @@ var playerOne;
 var playerTwo;
 var activePlayer = 0;
 var lastPlayer = 1;
-
+var coinPos = 0;
+var labyMap = [
+  [_,C,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,C,C,_,_,_,_],
+  [_,_,_,C,C,C,C,_,_,_],
+  [_,_,_,C,C,C,C,_,_,_],
+  [_,_,_,_,C,C,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,C,_]
+]
 function preload() {
   img = loadImage('img/pegman.png');
   img1 = loadImage('img/astro.png');
+  coins = loadImage('img/coins.png');
+  soundFormats('mp3', 'ogg');
+  coinSound = loadSound('sounds/coin.mp3');
 };
 
 function setup() {
@@ -33,6 +50,16 @@ function setup() {
   playerTwo.spawn(function dummy() {
     console.log('=== spawning player two from setup');}, 450, 450, UP);
 };
+
+function drawLabi() {
+  coinPos = (coinPos + 1)%30
+  coin = coins.get(~~(coinPos/5)*15, 0, 15, 15);
+  for (y=0; y<10; y++) {
+    for (x=0; x<10; x++) {
+      if (labyMap[y][x] == C) image(coin, x*50+17, y*50+25)
+    }
+  }
+}
 
 function Player(name, img) {
   this.over = false;
@@ -55,7 +82,7 @@ function Player(name, img) {
   };
   
   this.move = function(callback) {
-    frameRate(MOVING_FR);
+    //~ frameRate(MOVING_FR);
     if (DEBUG) console.log('--' + name + ' moving');
     switch (direction) {
       case DOWN :
@@ -73,6 +100,10 @@ function Player(name, img) {
     };
     function myTimer() {
       if (posX === nPosX && posY === nPosY) {
+        if (labyMap[posY/50][posX/50] == C) {
+          coinSound.play();
+          labyMap[posY/50][posX/50] = _;
+        }
         activePlayer++;
         activePlayer = activePlayer % 2;
         if (DEBUG) console.log('--' + name + 
@@ -85,7 +116,7 @@ function Player(name, img) {
   };
   
   this.turn = function(dir, callback) {
-    frameRate(TURNING_FR);
+    //~ frameRate(TURNING_FR);
     if (DEBUG) console.log('--' + name + ' turning');
     switch (dir) {
       case 'turnLeft' :
@@ -229,6 +260,7 @@ function Player(name, img) {
 // Drawing main canvas
 function draw() {
 	background(255, 252, 191);
+  drawLabi();
   playerOne.draw();
   playerTwo.draw();
 };
