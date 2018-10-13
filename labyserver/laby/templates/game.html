@@ -35,9 +35,6 @@
               console.log("Réponse reçue: %s", this.responseText);
               obj = JSON.parse(this.responseText);
               document.getElementById("javascript-code{% if player == 0 %}1{% else %}0{% endif %}").value = obj.code;
-              document.getElementById("round-number").textContent = obj.next_round;
-              document.getElementById("roundNumber").value = obj.next_round;
-              document.getElementById("submitBtn").disabled = '';
               parseBtn();
               r0();
           } else {
@@ -60,9 +57,28 @@
         formData.append("code", document.getElementById("javascript-code{% if player == 0 %}0{% else %}1{% endif %}").value);
         formData.append("round_number", document.getElementById("roundNumber").value);
         formData.append("csrfmiddlewaretoken", document.getElementsByName("csrfmiddlewaretoken")[0].value);
-        xhr.open('POST',{% url 'laby:json' %});
+        xhr.open('POST','{% url 'laby:get_code' %}');
         xhr.send(formData);  
-      }    
+      }
+      function endRound() {
+        function updateRound(event) {
+          if (this.status === 200) {
+            obj = JSON.parse(this.responseText);
+            document.getElementById("round-number").textContent = obj.next_round;
+            document.getElementById("roundNumber").value = obj.next_round;            
+            document.getElementById("submitBtn").disabled = '';
+          }
+        }
+        var xhr = new XMLHttpRequest();
+        xhr.onload = updateRound;
+        var formData = new FormData();
+        formData.append("game_id", document.getElementById("gameId").value);
+        formData.append("player", document.getElementById("playerId").value);
+        formData.append("round_number", document.getElementById("roundNumber").value);
+        formData.append("csrfmiddlewaretoken", document.getElementsByName("csrfmiddlewaretoken")[0].value);
+        xhr.open('POST','{% url 'laby:end_round' %}');
+        xhr.send(formData);  
+      }
     </script>
 </head>
 

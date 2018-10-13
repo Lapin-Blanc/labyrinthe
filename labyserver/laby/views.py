@@ -52,41 +52,55 @@ def gameView(request, game_id):
 def getCode(request):
   if request.method == "POST":
     game = Game.objects.get(id=request.POST['game_id'])
-    current_round = game.rounds_set.filter(round_number=request.POST['round_number']).last()
-    player = request.POST['player']
-    code = request.POST['code']
-    if player == '0' :
-      current_round.player_one_code = code
-      current_round.p_one_submitted = True
-      current_round.save()
-      if current_round.p_two_submitted :
-        current_round.over = True
-        current_round.save()
-        new_round = Rounds(game=game, round_number = current_round.round_number + 1)
-        new_round.save()
+    r_num = int(request.POST['round_number'])
+    player = int(request.POST['player'])
+    code = request.POST['code']    
+    r = game.rounds_set.get(round_number=r_num, over=False)
+    if player == 0 :
+      if not r.p_one_submitted:
+        r.player_one_code = code
+        r.p_one_submitted = True
+        r.save()
+      if r.p_two_submitted :
         response = JsonResponse({
-          'code': current_round.player_two_code,
-          'next_round' : new_round.round_number
-        }, status=200)
-        return response
+          'code': r.player_two_code,
+          }, status=200)
       else :
-        response = JsonResponse({'reason': 'waiting for player two\'s code'}, status=202)
-        return response
+        response = JsonResponse({
+          'reason': 'waiting for player two\'s code'
+          }, status=202)
+    if player == 1 :
+      if not r.p_two_submitted:
+        r.player_two_code = code
+        r.p_two_submitted = True
+        r.save()
+      if r.p_one_submitted :
+        response = JsonResponse({
+          'code': r.player_one_code,
+          }, status=200)
+      else :
+        response = JsonResponse({
+          'reason': 'waiting for player two\'s code'
+          }, status=202)
+    return response
+
+def endRound(request):
+  if request.method == "POST":
+    game = Game.objects.get(id=request.POST['game_id'])
+    r_num = int(request.POST['round_number'])
+    player = int(request.POST['player'])
+    r = game.rounds_set.get(round_number=r_num)
+    if player == 0 :
+      r.p_one_ran = True
+    if player == 1 :
+      r.p_two_ran = True
+    if (r.p_one_ran and r.p_two_ran):
+      r.over = True
+      game.rounds_set.create(round_number=r_num+1)
+    r.save()
+    response = JsonResponse({
+      'next_round': r_num+1,
+      }, status=200)
+    return response
     
-    if player == '1' :
-      current_round.player_two_code = code
-      current_round.p_two_submitted = True
-      current_round.save()
-      if current_round.p_one_submitted :
-        current_round.over = True
-        current_round.save()
-        new_round = Rounds(game=game, round_number = current_round.round_number + 1)
-        new_round.save()
-        response = JsonResponse({
-          'code': current_round.player_one_code,
-          'next_round' : new_round.round_number
-        }, status=200)
-        return response
-      else :
-        response = JsonResponse({'reason': 'waiting for player one\'s code'}, status=202)
-        return response
+    
