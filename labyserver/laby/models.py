@@ -20,6 +20,10 @@ class Game(models.Model):
         on_delete = models.SET_NULL,
         null = True,
         related_name = 'player_two')
+
+  class Meta:
+    verbose_name = 'partie'
+    verbose_name_plural = 'parties'
   
   def __str__(self):
     return "Partie {}".format(self.name)
@@ -29,14 +33,20 @@ class Rounds(models.Model):
   round_number = models.IntegerField('Round number', default=1)
   player_one_code = models.TextField('Player one code', blank=True, default='')
   p_one_submitted = models.BooleanField('Player one submitted code', default=False)
-  p_two_submitted = models.BooleanField('Player two submitted code', default=False)
+  p_one_ran = models.BooleanField('Player one ran code', default=False)
   player_two_code = models.TextField('Player two code', blank=True, default='')
+  p_two_submitted = models.BooleanField('Player two submitted code', default=False)
+  p_two_ran = models.BooleanField('Player two ran code', default=False)
   last_active = models.IntegerField('Last player', default=0)
   over = models.BooleanField('Round over', default=False)
   game = models.ForeignKey(Game, on_delete=models.CASCADE)
   
+  class Meta:
+    verbose_name = 'tour'
+    verbose_name_plural = 'tours'
+  
   def __str__(self):
-    return "Round {}, c1 = {}, c2={} last active {}, over = {}".format(
+    return "Round {}, c1 = {}, c2={}, next active = {}, over = {}".format(
         self.round_number,
         self.player_one_code[:10],
         self.player_two_code[:10],

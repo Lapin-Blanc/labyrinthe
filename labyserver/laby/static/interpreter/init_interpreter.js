@@ -21,6 +21,7 @@ function parseBtn() {
 function r0() {
 	if ( (count0>0) && (count1>0) ) {
 		console.log('Game over, next player = ' + activePlayer);
+    endRound();
 		return;
     }
     if (activePlayer == 0) {
@@ -42,6 +43,7 @@ function r0() {
 function r1() {
 	if ( (count0>0) && (count1>0) ) {
 		console.log(' Game over, next player = ' + activePlayer);
+    endRound();
 		return;
     }
     if (activePlayer == 1) {
