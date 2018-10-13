@@ -36,7 +36,7 @@
               console.log("Réponse reçue: %s", this.responseText);
               obj = JSON.parse(this.responseText);
               document.getElementById("javascript-code{% if player == 0 %}1{% else %}0{% endif %}").value = obj.code;
-              parseBtn();
+              parseCode();
               r0();
           } else {
               console.log("Status de la réponse: %d (%s)", this.status, this.statusText);
@@ -45,7 +45,8 @@
           }
       }
       function submitBtn() {
-        parseBtn();
+        document.getElementById("submitBtn").disabled = 'disabled';
+        parseCode();
         var xhr = new XMLHttpRequest()
         xhr.onprogress = onProgress;
         xhr.onerror = onError;
@@ -61,6 +62,7 @@
         xhr.open('POST','{% url 'laby:get_code' %}');
         xhr.send(formData);  
       }
+
       function endRound() {
         function updateRound(event) {
           if (this.status === 200) {
@@ -68,6 +70,8 @@
             document.getElementById("round-number").textContent = obj.next_round;
             document.getElementById("roundNumber").value = obj.next_round;            
             document.getElementById("submitBtn").disabled = '';
+            tic = 300;
+            countdown();
           }
         }
         var xhr = new XMLHttpRequest();
@@ -78,8 +82,24 @@
         formData.append("round_number", document.getElementById("roundNumber").value);
         formData.append("csrfmiddlewaretoken", document.getElementsByName("csrfmiddlewaretoken")[0].value);
         xhr.open('POST','{% url 'laby:end_round' %}');
-        xhr.send(formData);  
+        xhr.send(formData);
       }
+    </script>
+    <script>
+    var tic = 300;
+    function countdown() {
+      if (tic >= 0) {
+        document.getElementById('chrono').textContent = tic;
+        tic--;
+        setTimeout(countdown, 1000);
+      } else {
+        submitBtn();
+      }
+    }
+
+    window.onload = function(e) {
+        countdown();
+    }
     </script>
 </head>
 
@@ -87,7 +107,7 @@
   
   <h1>Labyrinthe {{ game.id }} {{ game.name }}</h1>
   <h2>Joueur {% if player == 0 %}Pegman{% else %}Astro{% endif %} - Tour <span id="round-number">{{ round_number }}</span></h2>
-  
+  <h3>Temps restant : <span id="chrono"></span></h3>
   <table border="1">
     <tr>
       <td><div id="blocklyDiv" style="height: 500px; width: 500px;"></td>
@@ -103,12 +123,7 @@
     </tr>
   </table>
 
-<!--
-<button onclick="parseBtn()" id="parseBtn">Parse</button>
-<button onclick="r0()" id="runBtn">Run</button>
-<button onclick="resetBtn()" id="resetBtn">Reset</button>
--->
-<button onclick="submitBtn()" id="submitBtn">Submit</button>
+  <button onclick="submitBtn()" id="submitBtn">Submit</button>
 
 		<!-- Blockly -->
 		<script>

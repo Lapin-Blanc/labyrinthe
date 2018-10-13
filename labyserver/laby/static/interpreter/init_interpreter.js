@@ -7,14 +7,13 @@ function resetBtn() {
   setup(); // Reset labyrinthe  
 }
 
-function parseBtn() {
+function parseCode() {
   var code = document.getElementById('javascript-code0').value;
   interpreter0 = new Interpreter(code, initAlert);
   interpreter0.player = playerOne; // from labyrinthe.js
   var code = document.getElementById('javascript-code1').value;
   interpreter1 = new Interpreter(code, initAlert);
   interpreter1.player = playerTwo; // from labyrinthe.js
-  disable('');
   count0 = count1 = 0;
 }
 
@@ -61,8 +60,4 @@ function r1() {
       if (DEBUG) console.log(' calling r0 with count1 = ' + count1);
       setTimeout(r0, STEP_DELAY)
     }		
-}
-
-function disable(disabled) {
-  document.getElementById('runBtn').disabled = disabled;
 }
