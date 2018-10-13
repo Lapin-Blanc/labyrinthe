@@ -6,18 +6,8 @@
   </head>
 
   <body>
-    
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-
-  <form action="{% url 'laby:create' %}" method="post">
-  {% csrf_token %}
-      <label for="game-name">Nom de la partie : </label>
-      <input type="text" name="game-name" id="game-name">
-      <input type="submit" value="Créer">
-  </form>
-
-<hr>    
   {% if game_list %}
+  <h2>Parties en cours : </h2>
       <ul>
       {% for game in game_list %}
           <li><a href="{% url 'laby:game' game.id %}">{{ game.name }}</a></li>
@@ -26,6 +16,16 @@
   {% else %}
       <p>Pas de partie en cours</p>
   {% endif %}
+  <hr>        
+  {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+  <h3>Créer une nouvelle partie : </h3>
+  <form action="{% url 'laby:create' %}" method="post">
+  {% csrf_token %}
+      <label for="game-name">Nom de la partie : </label>
+      <input type="text" name="game-name" id="game-name">
+      <input type="submit" value="Créer">
+  </form>
+
   </body>
 
 </html>

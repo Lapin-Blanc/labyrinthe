@@ -25,23 +25,6 @@ Maze.Blocks.LEFT_TURN = ' \u21BA';
 Maze.Blocks.RIGHT_TURN = ' \u21BB';
 
 // Extensions to Blockly's language and JavaScript generator.
-// Block apparaît
-Blockly.Blocks['maze_spawn'] = {
-  init: function() {
-    this.appendDummyInput()
-        .appendField("apparaît");
-    this.setNextStatement(true, null);
-    this.setColour(Maze.Blocks.MOVEMENT_HUE);
- this.setTooltip("Apparaît dans le labyrinthe");
- this.setHelpUrl("");
-  }
-};
-Blockly.JavaScript['maze_spawn'] = function(block) {
-  // TODO: Assemble JavaScript into code variable.
-  var code = 'spawn();\n';
-  return code;
-};
-
 // Bloc avance
 Blockly.Blocks['maze_moveForward'] = {
   init: function() {

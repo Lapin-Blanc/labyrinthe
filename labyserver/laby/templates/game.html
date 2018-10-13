@@ -7,6 +7,7 @@
     <link href='{% static "interpreter/style.css" %}' rel="stylesheet" type="text/css">
 
     <script src='{% static "p5/p5.js" %}'></script>
+    <script src='{% static "p5/p5.sound.js" %}'></script>
     <script src='{% static "p5/labyrinthe.js" %}'></script>
 
     <script src='{% static "interpreter/acorn_interpreter.js" %}'></script>
@@ -102,9 +103,11 @@
     </tr>
   </table>
 
+<!--
 <button onclick="parseBtn()" id="parseBtn">Parse</button>
 <button onclick="r0()" id="runBtn">Run</button>
 <button onclick="resetBtn()" id="resetBtn">Reset</button>
+-->
 <button onclick="submitBtn()" id="submitBtn">Submit</button>
 
 		<!-- Blockly -->

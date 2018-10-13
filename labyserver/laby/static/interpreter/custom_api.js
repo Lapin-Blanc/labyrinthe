@@ -18,15 +18,6 @@
   /*------------------------------------------*/
 
   ///////////////////////////////////////////////
-  // Spawn
-  var wrapper = function(callback) {
-    interpreter.player.spawn(callback);
-  }
-  interpreter.setProperty(scope, 'spawn',
-      interpreter.createAsyncFunction(wrapper));
-  /*------------------------------------------*/
-
-  ///////////////////////////////////////////////
   // Move
   var wrapper = function(callback) {
     interpreter.player.move(callback);

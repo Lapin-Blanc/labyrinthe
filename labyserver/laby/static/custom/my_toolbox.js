@@ -1,8 +1,7 @@
-﻿// alert("fabien");
-var my_toolbox = `<xml id='toolbox' style='display: none'>
+﻿var my_toolbox = `<xml id='toolbox' style='display: none'>
 <!-- Blockly toolbox definition -->
 			<category name='Labyrinthe' colour='%{BKY_COLOUR_HUE}'>
-				<block type='maze_spawn'></block>
+				<!--  <block type='maze_spawn'></block> -->
 				<block type='maze_moveForward'></block>
 				<block type='maze_turn'></block>
 				<block type='maze_blocked'></block>        
@@ -14,8 +13,8 @@ var my_toolbox = `<xml id='toolbox' style='display: none'>
 				<block type='logic_compare'></block>
 				<block type='logic_operation'></block>
 				<block type='logic_negate'></block>
-				<block type='logic_null'></block>
-				<block type='logic_ternary'></block>
+				<!-- <block type='logic_null'></block> -->
+				<!-- <block type='logic_ternary'></block> -->
 			</category>
 
 			<category name='Boucles' colour='%{BKY_LOOPS_HUE}'>
@@ -28,7 +27,7 @@ var my_toolbox = `<xml id='toolbox' style='display: none'>
 				<block type='math_arithmetic'></block>
 			</category>
 
-			<category name = 'Texte' colour='%{BKY_TEXTS_HUE}'>
+			<!-- <category name = 'Texte' colour='%{BKY_TEXTS_HUE}'>
 				<block type='text'></block>
 				<block type='text_print'></block>			
 				<block type='text_join'></block>
@@ -41,7 +40,7 @@ var my_toolbox = `<xml id='toolbox' style='display: none'>
 				<block type='text_charAt'></block>
 				<block type='text_prompt_ext'></block>
 				<block type='text_prompt'></block>
-			</category>
+			</category> -->
 
 			<category name='Variables' colour='%{BKY_VARIABLES_HUE}' custom='VARIABLE'>
 			</category>
